@@ -1,5 +1,3 @@
-
-# Data sources to get account IDs
 data "aws_caller_identity" "account" {
 }
 
