@@ -17,7 +17,6 @@ env:
   DO_SPACES_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY_ID }}
   DO_SPACES_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_ACCESS_KEY }}
   
-
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest

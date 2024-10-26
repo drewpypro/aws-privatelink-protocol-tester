@@ -1,8 +1,3 @@
-provider "aws" {
-  region = "us-west-2"
-}
-
-
 # VPCs Definition
 resource "aws_vpc" "producer_vpc" {
   cidr_block = "10.0.0.0/16"
