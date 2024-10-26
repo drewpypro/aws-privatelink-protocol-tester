@@ -1,0 +1,2 @@
+[2024-10-26_13-02-49] Received UDP message from ('127.0.0.1', 49245) and responded with b'69.69.69.69' (5-tuple: Source 0.0.0.0:5353 -> Destination 127.0.0.1:49245)
+[2024-10-26_13-02-49] Received TCP request from ('127.0.0.1', 42557) and responded with HTTP 200 OK (5-tuple: Source 0.0.0.0:8080 -> Destination 127.0.0.1:42557)
