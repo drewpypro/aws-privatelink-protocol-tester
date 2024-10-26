@@ -66,44 +66,42 @@ resource "aws_lb_target_group" "tcp_tg" {
 
 
 resource "aws_lb_listener" "udp_listener" {
-  load_balancer_arn = aws_lb.app-nlb.arn
+  load_balancer_arn = aws_lb.udp_nlb.arn
   port              = 53
   protocol          = "UDP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.struts.arn
+    target_group_arn = aws_lb_target_group.udp_tg.arn
   }
 
   tags = {
-    Name = "struts-nlb-listener"
+    Name = "udp-listener"
   }
 }
 
-resource "aws_lb_listener" "flask" {
-  load_balancer_arn = aws_lb.app-nlb.arn
-  port              = 9090
+resource "aws_lb_listener" "tcp_listener" {
+  load_balancer_arn = aws_lb.tcp_nlb.arn
+  port              = 8080
   protocol          = "TCP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.flask.arn
+    target_group_arn = aws_lb_target_group.tcp_tg.arn
   }
 
   tags = {
-    Name = "flask-nlb-listener"
+    Name = "tcp-listener"
   }
 }
 
 resource "aws_lb_target_group_attachment" "udp_target_group_attachment" {
-  count            = 2
-  target_group_arn = aws_lb_target_group.struts.arn
+  target_group_arn = aws_lb_target_group.udp_tg.arn
   target_id        = aws_instance.producer_ec2.id
-  port             = 8080
+  port             = 53
 }
 
 
 resource "aws_lb_target_group_attachment" "tcp_target_group_attachment" {
-  count            = 2
-  target_group_arn = aws_lb_target_group.flask.arn
+  target_group_arn = aws_lb_target_group.tcp_tg.arn
   target_id        = aws_instance.producer_ec2.id
-  port             = 9090
+  port             = 8080
 }
