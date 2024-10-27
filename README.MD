@@ -13,7 +13,6 @@
   - [Disclaimer](#disclaimer)
   - [License](#license)
 
-![aws-privatelink-protocol-tester](img/aws-privatelink-protocol-tester-highlevel.png)
 
 # Overview 
 
@@ -25,6 +24,7 @@ This repository contains Terraform configuration files and various scripts for s
 # Goals
 
 - Test UDP Behind privatelink :no_entry_sign:
+![aws-privatelink-protocol-tester](img/aws-privatelink-protocol-tester-highlevel.png)
   - UDP Does not work; 
     ```
     Error: creating EC2 VPC Endpoint Service: operation error EC2: CreateVpcEndpointServiceConfiguration, https response error StatusCode: 400, RequestID: 8fae1f50-a53d-465b-974d-6ae00ced277e, api error InvalidParameter: Network load balancer with arn "arn:aws:elasticloadbalancing:us-east-1:<ACCOUNT>:loadbalancer/net/udp-nlb/0cbd4b49473868f3" has UDP listeners. Privatelink does not support UDP.
@@ -32,16 +32,19 @@ This repository contains Terraform configuration files and various scripts for s
     > https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-service-consumers
     > - Interface - Create an interface endpoint to send ***TCP*** traffic to an endpoint service.
 - Test TCP/UDP listeners on same NLB behind privatelink. 
-  - Any UDP listeners it does not like; 
+![aws-tcp-udp-privatelink-fail](img/aws-tcp-udp-privatelink-fail.png)
+  - TCP and UDP listeners it does not like; 
     ```
     │ Error: creating EC2 VPC Endpoint Service: operation error EC2: CreateVpcEndpointServiceConfiguration, https response error StatusCode: 400, RequestID: b7ea2c9e-abfa-4371-af28-7f25e475e5c6, api error InvalidParameter: Network load balancer with arn "arn:aws:elasticloadbalancing:us-east-1:<ACCOUNT>:loadbalancer/net/tcp-udp-nlb/3b887e7b44ff64f4" has UDP listeners. Privatelink does not support UDP.
-│ 
-│   with aws_vpc_endpoint_service.producer_tcp_udp_privatelink_service,
-│   on privatelink.tf line 14, in resource "aws_vpc_endpoint_service" "producer_tcp_udp_privatelink_service":
-│   14: resource "aws_vpc_endpoint_service" "producer_tcp_udp_privatelink_service" {
+    │   with aws_vpc_endpoint_service.producer_tcp_udp_privatelink_service,
+    │   on privatelink.tf line 14, in resource "aws_vpc_endpoint_service" "producer_tcp_udp_privatelink_service":
+    │   14: resource "aws_vpc_endpoint_service" "producer_tcp_udp_privatelink_service" {
     ```
 
 - Test Multiple TCP listeners on single NLB behind privatelink. 
+![aws-multi-tcp-privatelink-success](img/aws-multi-tcp-privatelink-success.png)
+  - https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-log.txt
+  - https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-report.csv
 - Test TCP FO through privatelink. 
 - Test http headers through privatelink. :white_check_mark:
 - Try non-http protocols through privatelink. (ssh)
@@ -58,7 +61,7 @@ This repository contains Terraform configuration files and various scripts for s
 | UDP Traffic                                       | :no_entry_sign:                  | AWS doesn't allow an NLB with a UDP listener behind Privatelink as of today |
 | TCP/UCP NLB                                       | :no_entry_sign:                  | AWS doesn't allow an NLB with a UDP listener behind Privatelink as of today |
 | Tunneled UDP through TCP NLB                      | Likely allowed?                  | Create TCP session that tunnels UDP protocols |
-| Multiple TCP Listener NLB                         | Not explicitly blocked?          | Test interaction with privatelink and multiple listeners |
+| Multiple TCP Listener NLB                         | :white_check_mark:               | Can establish connectivity to both ports through a single privatelink |
 | TCP Fast Open (bidirectional SYN data)            | Not explicitly blocked?          | Attempt to establish TCP connection with SYN-ACK containing data using PrivateLink. |
 | TCP Split Handshake                               | Likely not blocked?              | Try to establish connection using split handshake. Check if AWS blocks it.         |
 | TCP SYN Flood                                     | Possible rate limiting by AWS?   | Flood target endpoint with SYN requests and observe behavior.                      |
