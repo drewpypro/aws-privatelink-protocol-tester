@@ -43,8 +43,8 @@ This repository contains Terraform configuration files and various scripts for s
 
 - Test Multiple TCP listeners on single NLB behind privatelink. :white_check_mark:
 ![aws-multi-tcp-privatelink-success](img/aws-multi-tcp-privatelink-success.png)
-  -[2024-10-27 Log Results](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-log.txt)
-  -[2024-10-27 Report](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-report.csv)
+  - [2024-10-27 Log Results](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-log.txt)
+  - [2024-10-27 Report](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-report.csv)
 - Test Syn w/data & TCP FO through privatelink. :white_check_mark:
   - Syn w/ Data works through Privatelink
     ![aws-privatelink-tcp-header-data](img/aws-privatelink-tcp-header-data.png)
@@ -53,9 +53,9 @@ This repository contains Terraform configuration files and various scripts for s
 - Test http headers through privatelink. :white_check_mark:
   - Bad http headers can be passed through privatelink. 
     ![aws-privatelink-http-headers](img/aws-privatelink-http-headers.png)
-- Test non-http protocols through privatelink. (ssh) :white_check_mark:
-  -[Consumer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-consumer-privatelink-test.pcap)
-  -[Producer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-producer-privatelink-test.pcap)
+- Test non-http protocols through privatelink. :white_check_mark: 
+  - [Consumer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-consumer-privatelink-test.pcap)
+  - [Producer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-producer-privatelink-test.pcap)
 - Create report with vpc flow logs.
 - Create diagram based on logs
 - Provide cost estimate breakdown
