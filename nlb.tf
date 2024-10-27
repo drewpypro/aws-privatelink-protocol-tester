@@ -11,15 +11,15 @@
 #   }
 # }
 
-resource "aws_lb" "tcp_udp_nlb" {
-  name               = "tcp-udp-nlb"
+resource "aws_lb" "multi_tcp_nlb" {
+  name               = "multi-tcp-nlb"
   internal           = false
   load_balancer_type = "network"
   subnet_mapping {
     subnet_id = aws_subnet.producer_nlb_subnet.id
   }
   tags = {
-    Name = "tcp-udp-nlb"
+    Name = "multi-tcp-nlb"
   }
 }
 
@@ -44,8 +44,8 @@ resource "aws_lb" "tcp_udp_nlb" {
 #   }
 # }
 
-resource "aws_lb_target_group" "tcp_tg" {
-  name        = "tcp-tg"
+resource "aws_lb_target_group" "tcp_tg_8080" {
+  name        = "tcp-tg-8080"
   port        = 8080
   protocol    = "TCP"
   vpc_id      = aws_vpc.producer_vpc.id
@@ -60,14 +60,14 @@ resource "aws_lb_target_group" "tcp_tg" {
   }
 
   tags = {
-    Name = "tcp-tg"
+    Name = "tcp-tg-8080"
   }
 }
 
-resource "aws_lb_target_group" "udp_tg" {
-  name        = "udp-tg"
+resource "aws_lb_target_group" "tcp_tg_53" {
+  name        = "tcp-tg-53"
   port        = 53
-  protocol    = "UDP"
+  protocol    = "TCP"
   vpc_id      = aws_vpc.producer_vpc.id
   target_type = "instance"
 
@@ -80,7 +80,7 @@ resource "aws_lb_target_group" "udp_tg" {
   }
 
   tags = {
-    Name = "tcp-tg"
+    Name = "tcp-tg-53"
   }
 }
 
@@ -98,31 +98,31 @@ resource "aws_lb_target_group" "udp_tg" {
 #   }
 # }
 
-resource "aws_lb_listener" "tcp_listener" {
-  load_balancer_arn = aws_lb.tcp_udp_nlb.arn
+resource "aws_lb_listener" "tcp_80_listener" {
+  load_balancer_arn = aws_lb.multi_tcp_nlb.arn
   port              = 8080
   protocol          = "TCP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.tcp_tg.arn
+    target_group_arn = aws_lb_target_group.tcp_tg_8080.arn
   }
 
   tags = {
-    Name = "tcp-listener"
+    Name = "tcp-listener-8080"
   }
 }
 
-resource "aws_lb_listener" "udp_listener" {
-  load_balancer_arn = aws_lb.tcp_udp_nlb.arn
+resource "aws_lb_listener" "tcp_53_listener" {
+  load_balancer_arn = aws_lb.multi_tcp_nlb.arn
   port              = 53
-  protocol          = "UDP"
+  protocol          = "TCP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.udp_tg.arn
+    target_group_arn = aws_lb_target_group.tcp_tg_53.arn
   }
 
   tags = {
-    Name = "tcp-listener"
+    Name = "tcp-listener-53"
   }
 }
 
@@ -134,13 +134,13 @@ resource "aws_lb_listener" "udp_listener" {
 
 
 resource "aws_lb_target_group_attachment" "tcp_target_group_attachment" {
-  target_group_arn = aws_lb_target_group.tcp_tg.arn
+  target_group_arn = aws_lb_target_group.tcp_tg_8080.arn
   target_id        = aws_instance.producer_ec2.id
   port             = 8080
 }
 
 resource "aws_lb_target_group_attachment" "udp_target_group_attachment" {
-  target_group_arn = aws_lb_target_group.udp_tg.arn
+  target_group_arn = aws_lb_target_group.tcp_tg_53.arn
   target_id        = aws_instance.producer_ec2.id
   port             = 53
 }
