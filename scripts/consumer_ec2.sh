@@ -52,6 +52,9 @@ ASCII_ART='  ______   __       __   ______
   echo "Use the following command to show usage:"
   echo "python3 aws_privatelink_protocol_tester.py"
   echo ""
+  echo "Test command pcap capture using:"
+  echo "(sudo tcpdump -i any -l port 8080 & tcpdump_pid=$!; ssh -v -p 8080 10.1.2.69; kill $tcpdump_pid)"
+  echo ""
 } | sudo tee /usr/lib/motd.d/30-banner
 
 sudo systemctl daemon-reload
