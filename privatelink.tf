@@ -46,6 +46,7 @@ resource "aws_vpc_endpoint" "consumer_tcp_privatelink_endpoint" {
   service_name          = aws_vpc_endpoint_service.producer_tcp_privatelink_service.service_name
   vpc_endpoint_type     = "Interface"
   security_group_ids    = [aws_security_group.consumer_privatelink_sg.id]
+  subnet_ids            = [aws_subnet.consumer_endpoint_subnet.id]
   
   subnet_configuration {
     ipv4      = "10.1.2.69"
@@ -57,8 +58,7 @@ resource "aws_vpc_endpoint" "consumer_tcp_privatelink_endpoint" {
   }
 
   depends_on = [
-    aws_vpc_endpoint_service.producer_tcp_privatelink_service,
-    aws_subnet.consumer_endpoint_subnet
+    aws_vpc_endpoint_service.producer_tcp_privatelink_service
   ]
 
 }
