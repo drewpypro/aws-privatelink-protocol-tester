@@ -25,7 +25,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
       - name: terraform init
         run: |
-          terraform init \
+          TF_LOG=DEBUG terraform init \
             -backend-config="bucket=$BUCKET_NAME" \
             -backend-config="key=$BUCKET_KEY" \
             -backend-config="endpoint=$BUCKET_ENDPOINT" \
