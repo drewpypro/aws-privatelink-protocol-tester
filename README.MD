@@ -1,18 +1,20 @@
 # aws-privatelink-protocol-tester
 - [Overview](#overview)
+  - [Goals](#goals)
   - [Key Features](#key-features)
   - [Project Structure](#project-structure)
   - [Important Notes](#important-notes)
   - [Considerations](#considerations)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
   - [Usage](#usage)
   - [TO DO](#to-do)
   - [Contributing](#contributing)
   - [Disclaimer](#disclaimer)
   - [License](#license)
 
-![aws-privatelink-protocol-tester](img/aws-vpce-policy-tester-highlevel.png)
+![aws-privatelink-protocol-tester](img/aws-privatelink-protocol-tester-highlevel.png)
+
+# Overview 
 
 This repository contains Terraform configuration files and various scripts for setting up a test environment to test AWS Privatelink Service Providers and Consumers.
 
