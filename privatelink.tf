@@ -11,9 +11,9 @@ data "aws_caller_identity" "account" {
 #   }
 # }
 
-resource "aws_vpc_endpoint_service" "producer_tcp_udp_privatelink_service" {
+resource "aws_vpc_endpoint_service" "producer_multi_tcp_privatelink_service" {
   acceptance_required        = false
-  network_load_balancer_arns = [aws_lb.tcp_udp_nlb.arn]
+  network_load_balancer_arns = [aws_lb.multi_tcp_nlb.arn]
   allowed_principals         = ["arn:aws:iam::${data.aws_caller_identity.account.account_id}:root"]
 
   tags = {
@@ -44,7 +44,7 @@ resource "aws_vpc_endpoint_service" "producer_tcp_udp_privatelink_service" {
 
 resource "aws_vpc_endpoint" "consumer_tcp_privatelink_endpoint" {
   vpc_id             = aws_vpc.consumer_vpc.id
-  service_name       = aws_vpc_endpoint_service.producer_tcp_udp_privatelink_service.service_name
+  service_name       = aws_vpc_endpoint_service.producer_multi_tcp_privatelink_service.service_name
   vpc_endpoint_type  = "Interface"
   security_group_ids = [aws_security_group.consumer_privatelink_sg.id]
   subnet_ids         = [aws_subnet.consumer_endpoint_subnet.id]
@@ -59,7 +59,7 @@ resource "aws_vpc_endpoint" "consumer_tcp_privatelink_endpoint" {
   }
 
   depends_on = [
-    aws_vpc_endpoint_service.producer_tcp_udp_privatelink_service
+    aws_vpc_endpoint_service.producer_multi_tcp_privatelink_service
   ]
 
 }
