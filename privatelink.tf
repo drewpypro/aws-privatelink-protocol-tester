@@ -57,7 +57,8 @@ resource "aws_vpc_endpoint" "consumer_tcp_privatelink_endpoint" {
   }
 
   depends_on = [
-    aws_vpc_endpoint_service.producer_tcp_privatelink_service
+    aws_vpc_endpoint_service.producer_tcp_privatelink_service,
+    aws_subnet.consumer_endpoint_subnet
   ]
 
 }
