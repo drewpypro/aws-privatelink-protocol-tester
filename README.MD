@@ -31,7 +31,7 @@ This repository contains Terraform configuration files and various scripts for s
     ```
     > https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-service-consumers
     > - Interface - Create an interface endpoint to send ***TCP*** traffic to an endpoint service.
-- Test TCP/UDP listeners on same NLB behind privatelink. 
+- Test TCP/UDP listeners on same NLB behind privatelink. :no_entry_sign:
 ![aws-tcp-udp-privatelink-fail](img/aws-tcp-udp-privatelink-fail.png)
   - TCP and UDP listeners it does not like; 
     ```
@@ -41,13 +41,15 @@ This repository contains Terraform configuration files and various scripts for s
     │   14: resource "aws_vpc_endpoint_service" "producer_tcp_udp_privatelink_service" {
     ```
 
-- Test Multiple TCP listeners on single NLB behind privatelink. 
+- Test Multiple TCP listeners on single NLB behind privatelink. :white_check_mark:
 ![aws-multi-tcp-privatelink-success](img/aws-multi-tcp-privatelink-success.png)
-  - https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-log.txt
-  - https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-report.csv
+  -[2024-10-27 Log Results](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-log.txt)
+  -[2024-10-27 Report](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-report.csv)
 - Test TCP FO through privatelink. 
 - Test http headers through privatelink. :white_check_mark:
-- Try non-http protocols through privatelink. (ssh)
+- Try non-http protocols through privatelink. (ssh) :white_check_mark:
+  -[Consumer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-consumer-privatelink-test.pcap)
+  -[Producer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-producer-privatelink-test.pcap)
 - Create report with vpc flow logs.
 - Create diagram based on logs
 - Provide cost estimate breakdown
@@ -60,8 +62,9 @@ This repository contains Terraform configuration files and various scripts for s
 | Non-Http Traffic                                  | :white_check_mark:               | Can establish ssh connectivity using privatelink  |
 | UDP Traffic                                       | :no_entry_sign:                  | AWS doesn't allow an NLB with a UDP listener behind Privatelink as of today |
 | TCP/UCP NLB                                       | :no_entry_sign:                  | AWS doesn't allow an NLB with a UDP listener behind Privatelink as of today |
-| Tunneled UDP through TCP NLB                      | Likely allowed?                  | Create TCP session that tunnels UDP protocols |
 | Multiple TCP Listener NLB                         | :white_check_mark:               | Can establish connectivity to both ports through a single privatelink |
+| SSH through privatelink                           | :white_check_mark:               | Able to ssh through privatelink on port 22 |
+| Tunneled UDP through TCP NLB                      | Likely allowed?                  | Create TCP session that tunnels UDP protocols |
 | TCP Fast Open (bidirectional SYN data)            | Not explicitly blocked?          | Attempt to establish TCP connection with SYN-ACK containing data using PrivateLink. |
 | TCP Split Handshake                               | Likely not blocked?              | Try to establish connection using split handshake. Check if AWS blocks it.         |
 | TCP SYN Flood                                     | Possible rate limiting by AWS?   | Flood target endpoint with SYN requests and observe behavior.                      |

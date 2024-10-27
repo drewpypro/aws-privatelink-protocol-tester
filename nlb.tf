@@ -104,6 +104,47 @@ resource "aws_lb_target_group" "tcp_tg_22" {
   }
 }
 
+resource "aws_lb_target_group" "tcp_tg_8081" {
+  name        = "tcp-tg-8081"
+  port        = 8081
+  protocol    = "TCP"
+  vpc_id      = aws_vpc.producer_vpc.id
+  target_type = "instance"
+
+  health_check {
+    protocol            = "TCP"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = {
+    Name = "tcp-tg-8081"
+  }
+}
+
+resource "aws_lb_target_group" "tcp_tg_8082" {
+  name        = "tcp-tg-8082"
+  port        = 8082
+  protocol    = "TCP"
+  vpc_id      = aws_vpc.producer_vpc.id
+  target_type = "instance"
+
+  health_check {
+    protocol            = "TCP"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = {
+    Name = "tcp-tg-8082"
+  }
+}
+
+
 # resource "aws_lb_listener" "udp_listener" {
 #   load_balancer_arn = aws_lb.udp_nlb.arn
 #   port              = 53
@@ -161,6 +202,35 @@ resource "aws_lb_listener" "tcp_22_listener" {
 }
 
 
+resource "aws_lb_listener" "tcp_8081_listener" {
+  load_balancer_arn = aws_lb.multi_tcp_nlb.arn
+  port              = 8081
+  protocol          = "TCP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tcp_tg_8081.arn
+  }
+
+  tags = {
+    Name = "tcp-listener-8081"
+  }
+}
+
+resource "aws_lb_listener" "tcp_8082_listener" {
+  load_balancer_arn = aws_lb.multi_tcp_nlb.arn
+  port              = 8082
+  protocol          = "TCP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tcp_tg_8082.arn
+  }
+
+  tags = {
+    Name = "tcp-listener-8082"
+  }
+}
+
+
 # resource "aws_lb_target_group_attachment" "udp_target_group_attachment" {
 #   target_group_arn = aws_lb_target_group.udp_tg.arn
 #   target_id        = aws_instance.producer_ec2.id
@@ -184,4 +254,17 @@ resource "aws_lb_target_group_attachment" "tcp_22_target_group_attachment" {
   target_group_arn = aws_lb_target_group.tcp_tg_22.arn
   target_id        = aws_instance.producer_ec2.id
   port             = 22
+}
+
+resource "aws_lb_target_group_attachment" "tcp_8081_target_group_attachment" {
+  target_group_arn = aws_lb_target_group.tcp_tg_8081.arn
+  target_id        = aws_instance.producer_ec2.id
+  port             = 8081
+}
+
+
+resource "aws_lb_target_group_attachment" "tcp_8082_target_group_attachment" {
+  target_group_arn = aws_lb_target_group.tcp_tg_8082.arn
+  target_id        = aws_instance.producer_ec2.id
+  port             = 8082
 }

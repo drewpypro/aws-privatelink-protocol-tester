@@ -58,7 +58,7 @@ resource "aws_security_group" "producer_ec2_sg" {
 
   ingress {
     from_port   = 8080
-    to_port     = 8080
+    to_port     = 8082
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.producer_vpc.cidr_block]
   }
@@ -113,8 +113,8 @@ resource "aws_security_group" "producer_nlb_sg" {
   }
 
   ingress {
-    from_port = 8080
-    to_port   = 8080
+    from_port   = 8080
+    to_port     = 8082
     protocol  = "tcp"
     cidr_blocks = [
       aws_vpc.producer_vpc.cidr_block,
@@ -123,8 +123,8 @@ resource "aws_security_group" "producer_nlb_sg" {
   }
 
   egress {
-    from_port = 8080
-    to_port   = 8080
+    from_port   = 8080
+    to_port     = 8082
     protocol  = "tcp"
     cidr_blocks = [
       aws_vpc.producer_vpc.cidr_block,

