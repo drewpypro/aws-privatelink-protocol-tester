@@ -54,7 +54,7 @@ ASCII_ART='  ______   __       __   ______
   echo ""
 } | sudo tee /usr/lib/motd.d/30-banner
 
-# Update internetproxy service
+# Update tcp-udp-tester service
 {
   echo "[Unit]"
   echo "Description=Basic TCP/UDP Tester Application"

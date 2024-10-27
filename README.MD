@@ -28,12 +28,34 @@ This repository contains Terraform configuration files and various scripts for s
     > https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-service-consumers
     > - Interface - Create an interface endpoint to send ***TCP*** traffic to an endpoint service.
 - Test TCP/UDP listeners on same NLB behind privatelink. 
-- Collect flow logs and analyze.
+- Test Multiple TCP listeners on single NLB behind privatelink. 
 - Test TCP FO through privatelink. 
-- Test http headers through privatelink.
-- Try non-http protocols through privatelink. :white_check_mark:
+- Test http headers through privatelink. :white_check_mark:
+- Try non-http protocols through privatelink. (ssh)
+- Create report with vpc flow logs.
 - Create diagram based on logs
 - Provide cost estimate breakdown
+
+# Test Cases
+
+| Test Case Description                             | Allowed/Denied                   | TestDetail/Result                                |
+|---------------------------------------------------|----------------------------------|--------------------------------------------------|
+| Http Traffic                                      | :white_check_mark:               | Can establish http connectivity using privatelink |
+| Non-Http Traffic                                  | :white_check_mark:               | Can establish ssh connectivity using privatelink  |
+| UDP Traffic                                       | :no_entry_sign:                  | AWS doesn't allow UDP NLBs behind Privatelink as of today |
+| TCP/UCP NLB                                       | Likely creation is blocked?      | AWS doesn't allow UDP NLBs behind Privatelink as of today |
+| Multiple TCP Listener NLB                         | Not explicitly blocked?          | Test interaction with privatelink and multiple listeners |
+| TCP Fast Open (bidirectional SYN data)            | Not explicitly blocked?          | Attempt to establish TCP connection with SYN-ACK containing data using PrivateLink. |
+| TCP Split Handshake                               | Likely not blocked?              | Try to establish connection using split handshake. Check if AWS blocks it.         |
+| TCP SYN Flood                                     | Possible rate limiting by AWS?   | Flood target endpoint with SYN requests and observe behavior.                      |
+| SSL-Based Attacks (e.g., Heartbleed, POODLE)      | Unlikely without decryption?     | Attempt SSL-based attacks over PrivateLink to see if any get blocked.              |
+| Application Layer Check (App-ID != SSL)           | Not available?                   | Send traffic through PrivateLink and try to detect mismatched protocol identifiers.|
+| Fragmented Traffic Handling                       | Uncertain?                       | Send fragmented packets to the endpoint to check if AWS blocks or permits.         |
+| TCP SYN with Data                                 | Not explicitly blocked?          | Send initial SYN packet containing data and observe behavior through PrivateLink.  |
+| Strict IP Address Check (source validation)       | Uncertain                        | Attempt using spoofed source IP address and see if it passes.                     |
+| Spoofed IP Address                                | Likely not blocked?              | Test by using a spoofed source IP for connections through PrivateLink.             |
+| Reconnaissance (TCP Port Scan)                    | Unlikely to be blocked?          | Perform a TCP SYN scan and check logs for detection or blocking behavior.          |
+
 
 ## Key Features
 - Builds consumer/producer vpc endpoints and privatelink services as well as the supporting infrastructure to test. 

@@ -1,0 +1,15 @@
+[ec2-user@consumer-52 ~]$ curl -vvv 10.1.2.69:8080
+*   Trying 10.1.2.69:8080...
+* Connected to 10.1.2.69 (10.1.2.69) port 8080
+> GET / HTTP/1.1
+> Host: 10.1.2.69:8080
+> User-Agent: curl/8.5.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: text/plain
+* no chunk, no close, no size. Assume close to signal end
+<
+* Closing connection
+Instance ID: i-0194c905fc9947bf8, Public IP: 54.90.222.183
+[ec2-user@consumer-52 ~]$
