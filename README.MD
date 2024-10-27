@@ -43,13 +43,19 @@ This repository contains Terraform configuration files and various scripts for s
 
 - Test Multiple TCP listeners on single NLB behind privatelink. :white_check_mark:
 ![aws-multi-tcp-privatelink-success](img/aws-multi-tcp-privatelink-success.png)
-  -[2024-10-27 Log Results](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-log.txt)
-  -[2024-10-27 Report](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-report.csv)
-- Test TCP FO through privatelink. 
+  - [2024-10-27 Log Results](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-log.txt)
+  - [2024-10-27 Report](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/2024-10-27_21-08-23-report.csv)
+- Test Syn w/data & TCP FO through privatelink. :white_check_mark:
+  - Syn w/ Data works through Privatelink
+    ![aws-privatelink-tcp-header-data](img/aws-privatelink-tcp-header-data.png)
+  - TCP Fast Open works through Privatelink :white_check_mark:
+    ![aws-privatelink-tcp-fastopen](img/aws-privatelink-tcp-fastopen.png)
 - Test http headers through privatelink. :white_check_mark:
-- Try non-http protocols through privatelink. (ssh) :white_check_mark:
-  -[Consumer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-consumer-privatelink-test.pcap)
-  -[Producer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-producer-privatelink-test.pcap)
+  - Bad http headers can be passed through privatelink. 
+    ![aws-privatelink-http-headers](img/aws-privatelink-http-headers.png)
+- Test non-http protocols through privatelink. :white_check_mark: 
+  - [Consumer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-consumer-privatelink-test.pcap)
+  - [Producer SSH Pcap](https://github.com/drewpypro/aws-privatelink-protocol-tester/blob/main/tests/10-27-2024-ssh-producer-privatelink-test.pcap)
 - Create report with vpc flow logs.
 - Create diagram based on logs
 - Provide cost estimate breakdown
@@ -65,13 +71,13 @@ This repository contains Terraform configuration files and various scripts for s
 | Multiple TCP Listener NLB                         | :white_check_mark:               | Can establish connectivity to both ports through a single privatelink |
 | SSH through privatelink                           | :white_check_mark:               | Able to ssh through privatelink on port 22 |
 | Tunneled UDP through TCP NLB                      | Likely allowed?                  | Create TCP session that tunnels UDP protocols |
-| TCP Fast Open (bidirectional SYN data)            | Not explicitly blocked?          | Attempt to establish TCP connection with SYN-ACK containing data using PrivateLink. |
+| TCP Fast Open (bidirectional SYN data)            | :white_check_mark:               | Able to communicate client2server using TCP FO without establishing tcp session |
 | TCP Split Handshake                               | Likely not blocked?              | Try to establish connection using split handshake. Check if AWS blocks it.         |
 | TCP SYN Flood                                     | Possible rate limiting by AWS?   | Flood target endpoint with SYN requests and observe behavior.                      |
 | SSL-Based Attacks (e.g., Heartbleed, POODLE)      | Unlikely without decryption?     | Attempt SSL-based attacks over PrivateLink to see if any get blocked.              |
 | Application Layer Check (App-ID != SSL)           | Not available?                   | Send traffic through PrivateLink and try to detect mismatched protocol identifiers.|
 | Fragmented Traffic Handling                       | Uncertain?                       | Send fragmented packets to the endpoint to check if AWS blocks or permits.         |
-| TCP SYN with Data                                 | Not explicitly blocked?          | Send initial SYN packet containing data and observe behavior through PrivateLink.  |
+| TCP SYN with Data                                 | :white_check_mark:               | Able to receive data in TCP syn   |
 | Strict IP Address Check (source validation)       | Uncertain                        | Attempt using spoofed source IP address and see if it passes.                     |
 | Spoofed IP Address                                | Likely not blocked?              | Test by using a spoofed source IP for connections through PrivateLink.             |
 | Reconnaissance (TCP Port Scan)                    | Unlikely to be blocked?          | Perform a TCP SYN scan and check logs for detection or blocking behavior.          |
