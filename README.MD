@@ -1,7 +1,8 @@
 # aws-privatelink-protocol-tester
 - [Overview](#overview)
-  - [Goals](#goals)
   - [Key Features](#key-features)
+  - [Goals](#goals)
+  - [Test Cases](#test-cases)
   - [Project Structure](#project-structure)
   - [Important Notes](#important-notes)
   - [Considerations](#considerations)
@@ -17,6 +18,9 @@
 # Overview 
 
 This repository contains Terraform configuration files and various scripts for setting up a test environment to test AWS Privatelink Service Providers and Consumers.
+
+## Key Features
+- Builds consumer/producer vpc endpoints and privatelink services as well as the supporting infrastructure to test. 
 
 # Goals
 
@@ -57,8 +61,6 @@ This repository contains Terraform configuration files and various scripts for s
 | Reconnaissance (TCP Port Scan)                    | Unlikely to be blocked?          | Perform a TCP SYN scan and check logs for detection or blocking behavior.          |
 
 
-## Key Features
-- Builds consumer/producer vpc endpoints and privatelink services as well as the supporting infrastructure to test. 
 
 ## Project Structure
 ```

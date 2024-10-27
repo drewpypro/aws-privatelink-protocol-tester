@@ -1,0 +1,2 @@
+[2024-10-27_17-36-46] UDP Test Failed: Source 0.0.0.0:34528 -> Destination 10.1.2.69:53 - Error: timed out
+[2024-10-27_17-36-46] TCP Test Success: Source 10.1.1.10:38413 -> Destination 10.1.2.69:8080 - Received response
