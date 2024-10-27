@@ -18,7 +18,7 @@ resource "aws_vpc" "consumer_vpc" {
 resource "aws_subnet" "producer_vm_subnet" {
   vpc_id                  = aws_vpc.producer_vpc.id
   cidr_block              = "10.0.1.0/24"
-  availability_zone       = "us-west-2a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "producer-vm-subnet"
@@ -29,7 +29,7 @@ resource "aws_subnet" "producer_vm_subnet" {
 resource "aws_subnet" "producer_nlb_subnet" {
   vpc_id                  = aws_vpc.producer_vpc.id
   cidr_block              = "10.0.2.0/24"
-  availability_zone       = "us-west-2a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "producer-nlb-subnet"
@@ -39,7 +39,7 @@ resource "aws_subnet" "producer_nlb_subnet" {
 resource "aws_subnet" "consumer_vm_subnet" {
   vpc_id                  = aws_vpc.consumer_vpc.id
   cidr_block              = "10.1.1.0/24"
-  availability_zone       = "us-west-2a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "consumer-vm-subnet"
@@ -49,7 +49,7 @@ resource "aws_subnet" "consumer_vm_subnet" {
 resource "aws_subnet" "consumer_endpoint_subnet" {
   vpc_id                  = aws_vpc.consumer_vpc.id
   cidr_block              = "10.1.2.0/24"
-  availability_zone       = "us-west-2a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "consumer-endpoint-subnet"
