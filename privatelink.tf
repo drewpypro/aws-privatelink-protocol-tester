@@ -28,7 +28,7 @@ resource "aws_vpc_endpoint_service" "producer_tcp_privatelink_service" {
 #   security_group_ids    = [aws_security_group.consumer_privatelink_sg.id]
 
 #   subnet_configuration {
-#     ipv4      = "10.1.2.69"
+#     ipv4      = "10.1.2.169"
 #     subnet_id = aws_subnet.consumer_endpoint_subnet.id
 #   }
 
@@ -48,7 +48,7 @@ resource "aws_vpc_endpoint" "consumer_tcp_privatelink_endpoint" {
   security_group_ids    = [aws_security_group.consumer_privatelink_sg.id]
   
   subnet_configuration {
-    ipv4      = "10.1.2.169"
+    ipv4      = "10.1.2.69"
     subnet_id = aws_subnet.consumer_endpoint_subnet.id
   }
 
