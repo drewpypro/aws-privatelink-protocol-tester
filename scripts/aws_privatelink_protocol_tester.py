@@ -87,7 +87,7 @@ def main():
     shell_enabled = args.shell
 
     udp_target_host = "10.1.2.69"
-    tcp_target_host = "10.1.2.169"
+    tcp_target_host = "10.1.2.69"
     udp_port = 53
     tcp_port = 8080
     report_data = []
