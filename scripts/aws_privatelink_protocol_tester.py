@@ -23,30 +23,31 @@ def write_report(data, report_dir, start_time):
                 writer.writerow(entry)
 
 
-def udp_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
+def tcp_53_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
     try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(('', 0))
         sock.settimeout(5)
+        sock.connect((target_host, target_port))
         source_ip, source_port = sock.getsockname()
-        sock.sendto(b'test', (target_host, target_port))
-        response, addr = sock.recvfrom(4096)
-        dest_ip, dest_port = addr
-        result = f"UDP Test Success: Source {source_ip}:{source_port} -> Destination {dest_ip}:{dest_port} - Received '{response}'"
+        message = "GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(target_host)
+        sock.sendall(message.encode())
+        response = sock.recv(4096)
+        result = f"TCP Test Success: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Received response"
         if log_enabled:
             log(result, log_dir, start_time)
-        report_data.append([datetime.datetime.now(), "UDP", source_ip, source_port, dest_ip, dest_port, "Success"])
+        report_data.append([datetime.datetime.now(), "TCP", source_ip, source_port, target_host, target_port, "Success"])
     except Exception as e:
         source_ip, source_port = sock.getsockname()
-        result = f"UDP Test Failed: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Error: {e}"
+        result = f"TCP Test Failed: Source {source_ip}:{source_port} -> Destination {target_host}:{target_port} - Error: {e}"
         if log_enabled:
             log(result, log_dir, start_time)
-        report_data.append([datetime.datetime.now(), "UDP", source_ip, source_port, target_host, target_port, "Failed"])
+        report_data.append([datetime.datetime.now(), "TCP", source_ip, source_port, target_host, target_port, "Failed"])
     finally:
         sock.close()
 
 
-def tcp_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
+def tcp_8080_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(('', 0))
@@ -86,10 +87,9 @@ def main():
     report_enabled = args.report or args.both
     shell_enabled = args.shell
 
-    udp_target_host = "10.1.2.69"
-    tcp_target_host = "10.1.2.69"
-    udp_port = 53
-    tcp_port = 8080
+    target_host = "10.1.2.69"
+    tcp_port_53 = 53
+    tcp_port_8080 = 8080
     report_data = []
     start_time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
@@ -101,10 +101,10 @@ def main():
     else:
         log_dir = None
 
-    # Run UDP test
-    udp_test(udp_target_host, udp_port, log_enabled or shell_enabled, report_data, log_dir, start_time)
-    # Run TCP test
-    tcp_test(tcp_target_host, tcp_port, log_enabled or shell_enabled, report_data, log_dir, start_time)
+    # Run tcp 53 test
+    tcp_53_test(target_host, tcp_port_53, log_enabled or shell_enabled, report_data, log_dir, start_time)
+    # Run tcp 8080 test
+    tcp_8080_test(target_host, tcp_port_8080, log_enabled or shell_enabled, report_data, log_dir, start_time)
 
     if report_enabled:
         write_report(report_data, report_dir, start_time)
