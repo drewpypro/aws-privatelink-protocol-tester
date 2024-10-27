@@ -28,7 +28,7 @@ jobs:
           terraform init \
             -backend-config="bucket=$BUCKET_NAME" \
             -backend-config="key=$BUCKET_KEY" \
-            -backend-config="endpoints.s3=$BUCKET_ENDPOINT" \
+            -backend-config="endpoint=$BUCKET_ENDPOINT" \
             -backend-config="access_key=$DO_SPACES_ACCESS_KEY_ID" \
             -backend-config="secret_key=$DO_SPACES_SECRET_ACCESS_KEY"
       - name: terraform plan
