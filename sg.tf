@@ -43,6 +43,13 @@ resource "aws_security_group" "producer_ec2_sg" {
   }
 
   ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.producer_vpc.cidr_block]
+  }
+
+  ingress {
     from_port   = 53
     to_port     = 53
     protocol    = "tcp"
@@ -86,6 +93,16 @@ resource "aws_security_group" "producer_nlb_sg" {
   }
 
   ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [
+      aws_vpc.producer_vpc.cidr_block,
+      aws_vpc.consumer_vpc.cidr_block
+    ]
+  }
+
+  ingress {
     from_port = 53
     to_port   = 53
     protocol  = "tcp"
@@ -128,6 +145,16 @@ resource "aws_security_group" "producer_nlb_sg" {
   egress {
     from_port = 53
     to_port   = 53
+    protocol  = "tcp"
+    cidr_blocks = [
+      aws_vpc.producer_vpc.cidr_block,
+      aws_vpc.consumer_vpc.cidr_block
+    ]
+  }
+
+  egress {
+    from_port = 22
+    to_port   = 22
     protocol  = "tcp"
     cidr_blocks = [
       aws_vpc.producer_vpc.cidr_block,
