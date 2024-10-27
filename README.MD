@@ -27,6 +27,7 @@ This repository contains Terraform configuration files and various scripts for s
     ```
     > https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-service-consumers
     > - Interface - Create an interface endpoint to send ***TCP*** traffic to an endpoint service.
+- Test TCP/UDP listeners on same NLB behind privatelink. 
 - Collect flow logs and analyze.
 - Test TCP FO through privatelink. 
 - Test http headers through privatelink.

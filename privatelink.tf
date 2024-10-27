@@ -25,6 +25,7 @@ resource "aws_vpc_endpoint_service" "producer_tcp_privatelink_service" {
 #   vpc_id                = aws_vpc.consumer_vpc.id
 #   service_name          = aws_vpc_endpoint_service.producer_udp_privatelink_service.service_name
 #   vpc_endpoint_type     = "Interface"
+#   subnet_ids            = [aws_subnet.consumer_endpoint_subnet.id]
 #   security_group_ids    = [aws_security_group.consumer_privatelink_sg.id]
 
 #   subnet_configuration {
