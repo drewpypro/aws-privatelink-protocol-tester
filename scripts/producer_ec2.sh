@@ -81,7 +81,7 @@ sudo systemctl enable amazon-ssm-agent
 sudo systemctl start amazon-ssm-agent
 
 # Install required python packages
-pip3 install argparse
+pip3 install argparse paramiko
 
 # Start and enable services
 sudo systemctl start tcp_udp_services
