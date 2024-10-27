@@ -18,17 +18,17 @@ This repository contains Terraform configuration files and various scripts for s
 
 # Goals
 
-- Test UDP Behind privatelink
+- Test UDP Behind privatelink :no_entry_sign:
   - UDP Does not work; 
     ```
     │ Error: creating EC2 VPC Endpoint Service: operation error EC2: CreateVpcEndpointServiceConfiguration, https response error StatusCode: 400, RequestID: 8fae1f50-a53d-465b-974d-6ae00ced277e, api error InvalidParameter: Network load balancer with arn "arn:aws:elasticloadbalancing:us-east-1:<ACCOUNT>:loadbalancer/net/udp-nlb/0cbd4b49473868f3" has UDP listeners. Privatelink does not support UDP.
     ```
     > https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-service-consumers
-    > - Interface - Create an interface endpoint to send **TCP** traffic to an endpoint service. Traffic destined for the endpoint service is resolved using DNS.
-- Collect flow logs and analyze
+    > - Interface - Create an interface endpoint to send ***TCP*** traffic to an endpoint service.
+- Collect flow logs and analyze.
 - Test TCP FO through privatelink. 
 - Test http headers through privatelink.
-- Try non-http protocols through privatelink.
+- Try non-http protocols through privatelink. :white_check_mark:
 - Create diagram based on logs
 - Provide cost estimate breakdown
 
