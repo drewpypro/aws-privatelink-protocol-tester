@@ -159,7 +159,7 @@ resource "aws_lb_target_group" "tcp_tg_8082" {
 #   }
 # }
 
-resource "aws_lb_listener" "tcp_80_listener" {
+resource "aws_lb_listener" "tcp_8080_listener" {
   load_balancer_arn = aws_lb.multi_tcp_nlb.arn
   port              = 8080
   protocol          = "TCP"

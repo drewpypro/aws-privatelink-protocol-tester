@@ -61,7 +61,7 @@ sudo systemctl daemon-reload
 
 # Install required packages
 sudo yum update -y
-sudo yum install -y python3 python3-pip paramiko
+sudo yum install -y python3 python3-pip
 
 # Install SSM Agent
 sudo yum install -y amazon-ssm-agent
