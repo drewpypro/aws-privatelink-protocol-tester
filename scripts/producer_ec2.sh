@@ -14,6 +14,12 @@ echo "127.0.0.1   $HOSTNAME" | sudo tee -a /etc/hosts
 # Ensure the hostname is applied immediately for the current session
 export PS1="[\u@$HOSTNAME \W]\$ "
 
+ssh-keygen -t rsa -f /home/ec2-user/server_rsa_key -N ""
+chmod 600 /home/ec2-user/server_rsa_key
+
+sudo useradd testuser
+echo "testuser:testpassword" | sudo chpasswd
+
 mkdir -p /home/ec2-user/.ssh
 echo '${public_key}' >> /home/ec2-user/.ssh/authorized_keys
 chown -R ec2-user:ec2-user /home/ec2-user/.ssh
@@ -54,7 +60,6 @@ ASCII_ART='  ______   __       __   ______
   echo ""
 } | sudo tee /usr/lib/motd.d/30-banner
 
-# Update tcp-udp-tester service
 {
   echo "[Unit]"
   echo "Description=Basic TCP/UDP Tester Application"
@@ -62,12 +67,14 @@ ASCII_ART='  ______   __       __   ______
   echo "[Service]"
   echo "ExecStart=/usr/bin/python3 /home/ec2-user/tcp_udp_services.py"
   echo "Restart=always"
+  echo "AmbientCapabilities=CAP_NET_BIND_SERVICE"
   echo ""
   echo "User=ec2-user"
   echo ""
   echo "[Install]"
   echo "WantedBy=multi-user.target"
 } | sudo tee /etc/systemd/system/tcp_udp_services.service
+
 
 sudo systemctl daemon-reload
 
