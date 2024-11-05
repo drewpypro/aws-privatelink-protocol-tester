@@ -78,21 +78,56 @@ def tcp_syn_random_header_test(target_host, target_port, log_enabled, report_dat
 def ssh_tcp_53_dns_test(target_host, log_enabled, report_data, log_dir, start_time):
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
     try:
-        ssh_client.connect(target_host, port=53, username='testuser', password='testpassword')
-        source_ip = "local"
-        source_port = "53"
-        _, stdout, _ = ssh_client.exec_command('dig @127.0.0.1 example.com')
-        result = stdout.read().decode()
         if log_enabled:
-            log(f"SSH Tunnel DNS Test: {result}", log_dir, start_time)
-        report_data.append([datetime.datetime.now(), "SSH", source_ip, source_port, target_host, 53, "Success"])
+            log("Attempting SSH connection...", log_dir, start_time)
+
+        # Attempt to connect
+        ssh_client.connect(target_host, port=53, username='testuser', password='testpassword')
+
+        if log_enabled:
+            log("SSH connection established.", log_dir, start_time)
+
+        # Running command after successful connection
+        _, stdout, stderr = ssh_client.exec_command('dig @127.0.0.1 example.com')
+
+        if log_enabled:
+            log("Running 'dig' command...", log_dir, start_time)
+
+        # Read results
+        result = stdout.read().decode()
+        error = stderr.read().decode()
+
+        if result:
+            if log_enabled:
+                log(f"SSH Tunnel DNS Test Result: {result}", log_dir, start_time)
+            report_data.append([datetime.datetime.now(), "SSH", "local", "53", target_host, 53, "Success"])
+        else:
+            if log_enabled:
+                log(f"SSH Tunnel DNS Test Error: {error}", log_dir, start_time)
+            report_data.append([datetime.datetime.now(), "SSH", "local", "53", target_host, 53, "Failed"])
+    except paramiko.AuthenticationException as e:
+        if log_enabled:
+            log(f"SSH Authentication failed: {e}", log_dir, start_time)
+        report_data.append([datetime.datetime.now(), "SSH", "local", "53", target_host, 53, "Authentication Failed"])
+    except paramiko.SSHException as e:
+        if log_enabled:
+            log(f"General SSH error: {e}", log_dir, start_time)
+        report_data.append([datetime.datetime.now(), "SSH", "local", "53", target_host, 53, "SSH Failed"])
+    except socket.error as e:
+        if log_enabled:
+            log(f"Socket error: {e}", log_dir, start_time)
+        report_data.append([datetime.datetime.now(), "SSH", "local", "53", target_host, 53, "Socket Failed"])
     except Exception as e:
         if log_enabled:
             log(f"SSH Tunnel DNS Test Failed: {e}", log_dir, start_time)
-        report_data.append([datetime.datetime.now(), "SSH", "local", 53, target_host, 53, "Failed"])
+        report_data.append([datetime.datetime.now(), "SSH", "local", "53", target_host, 53, "Failed"])
     finally:
         ssh_client.close()
+        if log_enabled:
+            log("SSH connection closed.", log_dir, start_time)
+
 
 # TCP Fast Open Test
 def tcp_fast_open_test(target_host, target_port, log_enabled, report_data, log_dir, start_time):
